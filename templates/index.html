@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        .hidden{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- methid and action is for http request and link -->
+    <form id='form'>
+            <label for="name">Create a To-do item</label>
+            <input type="text" id="description" name="description" placeholder="input todo">
+            <input type="submit" id="submit" value="submit">
+    </form>
+    <div id="error" class="hidden">
+        Something went Wrong!
+    </div>
+    <ul>
+        {% for d in data %}
+        <li>{{d.description}}</li>
+        {% endfor %}
+    </ul>
+    
+
+    <script>
+        document.getElementById('form').onsubmit=function(e){
+            e.preventDefault();
+            fetch('/todos/create', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'description':document.getElementById('description').value
+                }),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResponse){
+                console.log(jsonresponse);
+                const liItem = document.createElement('LI');
+                liItem.innerHTML = jsonResponse['description'];
+                document.getElementById('todos').appendChild(liItem);
+                document.getElementById('error').className='hidden'
+            })
+            .catch(function(){
+                document.getElementById('error').className=''
+            });
+        }
+    </script>
+  
+</body>
+</html>
